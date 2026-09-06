@@ -1,0 +1,27 @@
+{
+  "name": "privbrowse-enterprise",
+  "version": "1.2.0",
+  "description": "PrivBrowse Enterprise: On-Device Visual Perception for Light-Weight Browser Agents (SIH 2026, PS ID SIH26171)",
+  "main": "background.js",
+  "scripts": {
+    "test": "node test_privbrowse.js && node test_ai_connectivity.js && node test_integration_security.js && node test_inquisition_hardening.js && node test_gliner_runtime.js && node test_hardware_benchmarks.js && node test_model_inference.js && node test_production_resilience.js && node test_browser_e2e.js && node test_enterprise_e2e.js && node test_production_product.js",
+    "test:unit": "node test_privbrowse.js && node test_ai_connectivity.js && node test_integration_security.js && node test_inquisition_hardening.js && node test_gliner_runtime.js && node test_hardware_benchmarks.js && node test_production_resilience.js && node test_enterprise_e2e.js",
+    "test:browser": "node test_browser_e2e.js && node test_model_inference.js && node test_production_product.js",
+    "benchmark": "node test_hardware_benchmarks.js",
+    "pack": "node scripts/pack_extension.js",
+    "start": "python -m http.server 8000",
+    "lint": "node -e \"const { execSync } = require('child_process'); ['background.js', 'content.js', 'options.js', 'popup.js', 'sanitize.js', 'offscreen.js', 'config.js'].forEach(f => { execSync('node --check ' + f); console.log('Syntax OK: ' + f); });\""
+  },
+  "keywords": [
+    "privacy",
+    "browser-agent",
+    "split-compute",
+    "zero-pii",
+    "sih2026",
+    "webgpu",
+    "smolvlm",
+    "gliner"
+  ],
+  "author": "Team Breaking Bad (SIH 2026, PS ID SIH26171)",
+  "license": "Apache-2.0"
+}

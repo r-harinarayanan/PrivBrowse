@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; connect-src https://cdn.jsdelivr.net https://huggingface.co https://*.huggingface.co data: blob:; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline';">
+  <title>PrivBrowse — Offscreen WebGPU & WASM Document</title>
+</head>
+<body>
+  <!-- Offscreen document hosting WebGPU / WASM execution context for on-device inference -->
+  <canvas id="offscreen-canvas" width="640" height="360" style="display:none;"></canvas>
+  <script type="module" src="offscreen.js"></script>
+</body>
+</html>

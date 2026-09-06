@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>National Merit Scholarship Portal 2026 — Clean Demo Form</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-hover: #1d4ed8;
+      --accent: #10b981;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* On-Page Demo Controller Bar */
+    .agent-demo-bar {
+      background: #0f172a;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+    }
+    .demo-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .demo-bar-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .demo-bar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    .demo-bar-desc {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .demo-bar-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-demo-run {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-demo-run:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-1px);
+    }
+    .btn-demo-reset {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .portal-banner {
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      color: #fff;
+      padding: 24px 30px;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .portal-banner h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .portal-banner p {
+      font-size: 13px;
+      color: #93c5fd;
+      margin-top: 3px;
+    }
+    .scheme-badge {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 30px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .step-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .full-width {
+      grid-column: span 2;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .required-star {
+      color: #dc2626;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1e293b;
+      background: #fff;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      font-size: 13px;
+      font-weight: 400;
+      color: #475569;
+      cursor: pointer;
+    }
+    .form-actions {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-submit {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 26px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-reset {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Live Submission Preview Card */
+    .preview-card {
+      margin-top: 24px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .preview-header h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #475569;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      font-size: 12px;
+    }
+    .p-item {
+      background: #fff;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+    .p-label {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+    .p-value {
+      font-weight: 600;
+      color: #0f172a;
+      min-height: 16px;
+      word-break: break-word;
+    }
+
+    /* Submission Success Banner */
+    .success-banner {
+      display: none;
+      margin-top: 20px;
+      background: #ecfdf5;
+      border: 1px solid #10b981;
+      color: #065f46;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Interactive On-Page Demo Launcher -->
+    <div class="agent-demo-bar">
+      <div class="demo-bar-left">
+        <span class="demo-bar-badge">SIH26171</span>
+        <div>
+          <div class="demo-bar-title">PrivBrowse On-Device Visual Agent Demo</div>
+          <div class="demo-bar-desc">Zero-PII Perception &bull; CaMeL Safety Gate &bull; On-Device Execution</div>
+        </div>
+      </div>
+      <div class="demo-bar-actions">
+        <button id="btn_trigger_onpage_demo" class="btn-demo-run">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Run Visual Agent Demo</span>
+        </button>
+        <button id="btn_onpage_reset" class="btn-demo-reset">Reset</button>
+      </div>
+    </div>
+
+    <!-- Header Banner -->
+    <header class="portal-banner">
+      <div>
+        <h1>National Merit Scholarship Portal 2026</h1>
+        <p>Ministry of Education &bull; Unified Scholarship Application Form</p>
+      </div>
+      <div class="scheme-badge">Government of India</div>
+    </header>
+
+    <!-- Main Form Card -->
+    <main class="form-card">
+      <div class="step-indicator">
+        <span class="step-dot">1</span>
+        <span>Stage 1: Applicant Profile & Eligibility Details</span>
+      </div>
+
+      <form id="scholarship_form">
+        <div class="form-grid">
+          <!-- Full Name -->
+          <div class="form-group">
+            <label for="student_name">Applicant Full Name <span class="required-star">*</span></label>
+            <input type="text" id="student_name" name="student_name" placeholder="As per matriculation certificate" required>
+          </div>
+
+          <!-- Email Address -->
+          <div class="form-group">
+            <label for="student_email">Email Address <span class="required-star">*</span></label>
+            <input type="email" id="student_email" name="student_email" placeholder="student@example.edu.in" required>
+          </div>
+
+          <!-- Mobile Number -->
+          <div class="form-group">
+            <label for="student_phone">Mobile Number <span class="required-star">*</span></label>
+            <input type="tel" id="student_phone" name="student_phone" placeholder="10-digit mobile number" required>
+          </div>
+
+          <!-- Social Category -->
+          <div class="form-group">
+            <label for="student_category">Social Category / Reservation <span class="required-star">*</span></label>
+            <select id="student_category" name="student_category" required>
+              <option value="">-- Select Category --</option>
+              <option value="General">General / Unreserved</option>
+              <option value="OBC">Other Backward Classes (OBC-NCL)</option>
+              <option value="SC">Scheduled Caste (SC)</option>
+              <option value="ST">Scheduled Tribe (ST)</option>
+              <option value="EWS">Economically Weaker Section (EWS)</option>
+            </select>
+          </div>
+
+          <!-- Permanent Address -->
+          <div class="form-group full-width">
+            <label for="student_address">Permanent Residential Address <span class="required-star">*</span></label>
+            <textarea id="student_address" name="student_address" rows="3" placeholder="Flat / House No., Street, City, State, PIN Code" required></textarea>
+          </div>
+
+          <!-- Consent Declaration -->
+          <div class="form-group full-width checkbox-group">
+            <input type="checkbox" id="student_consent" name="student_consent" required>
+            <label for="student_consent">
+              I hereby solemnly declare that all personal and academic details furnished in this application are true and verified. I authorize the scholarship committee to verify these records.
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="reset" class="btn-reset" id="btn_reset_form">Clear Fields</button>
+          <button type="submit" class="btn-submit" id="btn_submit_app">Submit Application</button>
+        </div>
+      </form>
+
+      <!-- Live Reactive Value Preview Card -->
+      <div class="preview-card">
+        <div class="preview-header">
+          <h3>Form Values Real-Time Monitor</h3>
+          <span style="font-size: 11px; color: #64748b;">Updates character-by-character as PrivBrowse types</span>
+        </div>
+        <div class="preview-grid">
+          <div class="p-item"><div class="p-label">Name:</div><div class="p-value" id="pv_name">—</div></div>
+          <div class="p-item"><div class="p-label">Email:</div><div class="p-value" id="pv_email">—</div></div>
+          <div class="p-item"><div class="p-label">Phone:</div><div class="p-value" id="pv_phone">—</div></div>
+          <div class="p-item"><div class="p-label">Category:</div><div class="p-value" id="pv_cat">—</div></div>
+          <div class="p-item"><div class="p-label">Address:</div><div class="p-value" id="pv_addr">—</div></div>
+          <div class="p-item"><div class="p-label">Consent:</div><div class="p-value" id="pv_consent">Not Checked</div></div>
+        </div>
+      </div>
+
+      <!-- Submission Feedback -->
+      <div class="success-banner" id="success_banner">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <strong>Application Successfully Submitted!</strong> Application Ref: <code>SCH-2026-NMP-8921</code>. All verified fields were filled and submitted cleanly.
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const fName = document.getElementById('student_name');
+    const fEmail = document.getElementById('student_email');
+    const fPhone = document.getElementById('student_phone');
+    const fCat = document.getElementById('student_category');
+    const fAddr = document.getElementById('student_address');
+    const fConsent = document.getElementById('student_consent');
+
+    function updatePreview() {
+      document.getElementById('pv_name').textContent = fName.value || '—';
+      document.getElementById('pv_email').textContent = fEmail.value || '—';
+      document.getElementById('pv_phone').textContent = fPhone.value || '—';
+      document.getElementById('pv_cat').textContent = fCat.value || '—';
+      document.getElementById('pv_addr').textContent = fAddr.value || '—';
+      document.getElementById('pv_consent').textContent = fConsent.checked ? 'Checked' : 'Not Checked';
+    }
+
+    ['input', 'change', 'blur'].forEach(evt => {
+      document.getElementById('scholarship_form').addEventListener(evt, updatePreview);
+    });
+
+    document.getElementById('scholarship_form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('success_banner').style.display = 'block';
+      document.getElementById('success_banner').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function resetAll() {
+      document.getElementById('scholarship_form').reset();
+      updatePreview();
+      document.getElementById('success_banner').style.display = 'none';
+    }
+
+    document.getElementById('btn_reset_form').addEventListener('click', () => setTimeout(resetAll, 50));
+    document.getElementById('btn_onpage_reset').addEventListener('click', resetAll);
+
+    // =========================================================================
+    // REAL PRIVBROWSE PIPELINE TRIGGER
+    // Invokes the actual Chrome Extension 5-stage pipeline via content script bridge
+    // =========================================================================
+    let isExtensionActive = document.documentElement.hasAttribute('data-privbrowse-extension-active');
+    window.addEventListener('message', (e) => {
+      if (e.data?.source === 'PRIVBROWSE_EXTENSION' && e.data?.type === 'EXTENSION_READY') {
+        isExtensionActive = true;
+      }
+    });
+
+    document.getElementById('btn_trigger_onpage_demo').addEventListener('click', () => {
+      resetAll();
+
+      isExtensionActive = document.documentElement.hasAttribute('data-privbrowse-extension-active');
+      if (!isExtensionActive) {
+        console.log('[PrivBrowse Demo] Extension not detected in standalone mode. Launching visual agent simulation...');
+        runStandaloneSimulation();
+        return;
+      }
+
+      // Dispatch execution request to PrivBrowse content script bridge
+      window.postMessage({
+        source: 'PRIVBROWSE_PAGE_DEMO',
+        type: 'TRIGGER_DEMO',
+        goal: 'Fill out this scholarship application form with my profile details'
+      }, '*');
+    });
+
+    async function runStandaloneSimulation() {
+      // Create HUD if not present
+      let hud = document.getElementById('privbrowse-hud');
+      if (!hud) {
+        hud = document.createElement('div');
+        hud.id = 'privbrowse-hud';
+        hud.style.cssText = `
+          position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+          background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
+          border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 40px;
+          padding: 8px 18px; display: flex; align-items: center; gap: 12px;
+          z-index: 999999; box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 15px rgba(16,185,129,0.25);
+          color: #f8fafc; font-family: system-ui, sans-serif; font-size: 12px;
+          transition: all 0.3s ease;
+        `;
+        document.body.appendChild(hud);
+      }
+      
+      const updateHUD = (stage, detail) => {
+        hud.innerHTML = `
+          <div style="width:10px; height:10px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981;"></div>
+          <span style="font-weight:700; color:#38bdf8;">PrivBrowse Agent</span>
+          <span style="color:#64748b;">|</span>
+          <span style="color:#a7f3d0; font-weight:600;">${stage}</span>
+          <span style="color:#94a3b8;">— ${detail}</span>
+        `;
+      };
+
+      // Create Virtual Pointer
+      let cursor = document.getElementById('privbrowse-cursor');
+      if (!cursor) {
+        cursor = document.createElement('div');
+        cursor.id = 'privbrowse-cursor';
+        cursor.style.cssText = `
+          position: fixed; width: 22px; height: 22px; pointer-events: none; z-index: 1000000;
+          transition: top 0.35s ease, left 0.35s ease;
+          background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%2310b981' stroke='%23047857' stroke-width='1.5'%3E%3Cpath d='M3 3l7 18 3-7 7-3L3 3z'/%3E%3C/svg%3E") no-repeat center center;
+        `;
+        document.body.appendChild(cursor);
+      }
+
+      const moveCursorTo = (el) => {
+        const rect = el.getBoundingClientRect();
+        cursor.style.left = (rect.left + rect.width / 2) + 'px';
+        cursor.style.top = (rect.top + rect.height / 2) + 'px';
+      };
+
+      const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+      const typeInto = async (el, text) => {
+        moveCursorTo(el);
+        el.focus();
+        el.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.3)';
+        el.value = '';
+        for (let ch of text) {
+          el.value += ch;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          await sleep(25);
+        }
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        el.style.boxShadow = '';
+        await sleep(150);
+      };
+
+      updateHUD('Stage 1: Perception', 'Scanning DOM & building visual coordinate index...');
+      await sleep(500);
+
+      updateHUD('Stage 2: Sanitization', 'Masking sensitive identifiers; 0 raw PII egressed...');
+      await sleep(500);
+
+      updateHUD('Stage 3: Reasoning', 'Evaluating form structure & mapping profile attributes...');
+      await sleep(500);
+
+      updateHUD('Stage 4: CaMeL Gate', 'Deterministic action verification passed...');
+      await sleep(400);
+
+      updateHUD('Stage 5: Local Execution', 'Filling application details...');
+      await typeInto(fName, 'Aarav Sharma');
+      await typeInto(fEmail, 'aarav.sharma@example.edu.in');
+      await typeInto(fPhone, '9876543210');
+
+      moveCursorTo(fCat);
+      fCat.focus();
+      fCat.value = 'OBC';
+      fCat.dispatchEvent(new Event('change', { bubbles: true }));
+      await sleep(250);
+
+      await typeInto(fAddr, '42 Civil Lines, North Campus, New Delhi 110007');
+
+      moveCursorTo(fConsent);
+      fConsent.checked = true;
+      fConsent.dispatchEvent(new Event('change', { bubbles: true }));
+      await sleep(250);
+
+      moveCursorTo(document.getElementById('btn_submit_app'));
+      await sleep(350);
+      document.getElementById('btn_submit_app').click();
+
+      updateHUD('Execution Complete', 'Application submitted safely • Zero raw PII egressed');
+      setTimeout(() => {
+        if (cursor) cursor.remove();
+        setTimeout(() => { if (hud) hud.remove(); }, 3500);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

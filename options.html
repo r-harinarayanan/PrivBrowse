@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrivBrowse Enterprise — Administration & Configuration</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">PrivBrowse</span>
+          <span class="brand-badge">ENTERPRISE v1.2.0</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu" role="tablist">
+        <button class="nav-item active" data-tab="tab-vault" role="tab" aria-selected="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Identity Vault
+        </button>
+        <button class="nav-item" data-tab="tab-engine" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="M20 12v8H4v-8"/><path d="m4 4 16 0"/><circle cx="12" cy="12" r="3"/></svg>
+          Perception Engine
+        </button>
+        <button class="nav-item" data-tab="tab-reasoning" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 22v-4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M22 12h-4"/><path d="m19.07 4.93-2.83 2.83"/></svg>
+          Cloud & Air-Gapped LLM
+        </button>
+        <button class="nav-item" data-tab="tab-sanitizer" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          NER & PII Redaction
+        </button>
+        <button class="nav-item" data-tab="tab-compliance" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Compliance & Audit
+        </button>
+        <button class="nav-item" data-tab="tab-storage" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          Neural Cache & Storage
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span>Zero-PII Invariant Active</span>
+        </div>
+        <div class="build-info">Commercial Release • Build 2026.1</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content">
+      <header class="content-header">
+        <div>
+          <h1 id="page-title">Enterprise Identity Vault</h1>
+          <p id="page-subtitle" class="subtitle">Manage encrypted profile credentials and master passphrase.</p>
+        </div>
+        <div class="header-actions">
+          <button id="btn_reset_defaults" class="btn btn-secondary">Reset Defaults</button>
+          <button id="btn_save_options" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Changes
+          </button>
+        </div>
+      </header>
+
+      <div id="save-alert" class="alert alert-success" style="display: none;" role="alert">
+        Configuration saved and synchronized across all extension contexts!
+      </div>
+
+      <!-- TAB 1: IDENTITY VAULT -->
+      <section id="tab-vault" class="tab-pane active" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>Cryptographic Master Passphrase</h2>
+            <p>Protects your stored API keys and confidential credentials via PBKDF2-SHA256 (100,000 iterations) + AES-GCM 256-bit encryption.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="opt_passphrase">Master Passphrase</label>
+              <input type="password" id="opt_passphrase" placeholder="Enter custom master passphrase...">
+              <small class="help-text">Never written to persistent storage. Kept in volatile session memory.</small>
+            </div>
+            <div class="form-group">
+              <label for="opt_key_ttl">Key Rotation Lifetime</label>
+              <select id="opt_key_ttl">
+                <option value="30">30 Days (Enterprise Standard)</option>
+                <option value="14">14 Days</option>
+                <option value="7">7 Days (High Security)</option>
+                <option value="1">24 Hours (Paranoid)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="opt_pbkdf2_iterations">PBKDF2 Iterations</label>
+              <input type="number" id="opt_pbkdf2_iterations" value="100000" min="50000" max="500000">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Identity Profile Attributes</h2>
+            <p>Local user values used to safely populate forms on device. Stored only in local browser storage.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="opt_fullname">Full Legal Name</label>
+              <input type="text" id="opt_fullname" placeholder="e.g. Aarav Sharma">
+            </div>
+            <div class="form-group">
+              <label for="opt_email">Official Email Address</label>
+              <input type="email" id="opt_email" placeholder="e.g. aarav.sharma@example.edu.in">
+            </div>
+            <div class="form-group">
+              <label for="opt_phone">Phone Number</label>
+              <input type="tel" id="opt_phone" placeholder="e.g. 9876543210">
+            </div>
+            <div class="form-group">
+              <label for="opt_category">Reservation / Category</label>
+              <input type="text" id="opt_category" placeholder="e.g. General, OBC, SC, ST">
+            </div>
+            <div class="form-group">
+              <label for="opt_dob">Date of Birth</label>
+              <input type="date" id="opt_dob">
+            </div>
+            <div class="form-group">
+              <label for="opt_pincode">Postal PIN Code</label>
+              <input type="text" id="opt_pincode" placeholder="e.g. 110007">
+            </div>
+            <div class="form-group full-width">
+              <label for="opt_address">Residential Address</label>
+              <input type="text" id="opt_address" placeholder="e.g. 42 Civil Lines, North Campus, New Delhi 110007">
+            </div>
+            <div class="form-group">
+              <label for="opt_aadhaar">Aadhaar Number (Optional)</label>
+              <input type="password" id="opt_aadhaar" placeholder="XXXX-XXXX-9012">
+            </div>
+            <div class="form-group">
+              <label for="opt_pan">PAN Card (Optional)</label>
+              <input type="text" id="opt_pan" placeholder="ABCDE1234F">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: PERCEPTION ENGINE -->
+      <section id="tab-engine" class="tab-pane" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>Stage 1 Perception Architecture</h2>
+            <p>Select the on-device engine used to discover and map interactive DOM elements.</p>
+          </div>
+          <div class="radio-cards">
+            <label class="radio-card">
+              <input type="radio" name="opt_engine" value="vision" checked>
+              <div class="radio-content">
+                <div class="radio-title">
+                  <strong>On-Device Neural Vision (SmolVLM-256M WebGPU)</strong>
+                  <span class="badge badge-primary">PRIMARY</span>
+                </div>
+                <p>Visual perception via on-device multimodal model. Reads screen layouts like a human user with Atomic Zero-Knowledge Frame Rendering (AZFR).</p>
+                <div class="meta-row">
+                  <span>Latency: ~500ms</span> • <span>RAM: ~210MB (auto-close after 30s)</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="radio-card">
+              <input type="radio" name="opt_engine" value="dom">
+              <div class="radio-content">
+                <div class="radio-title">
+                  <strong>Deterministic DOM Engine</strong>
+                  <span class="badge badge-secondary">0 MB DOWNLOAD</span>
+                </div>
+                <p>Lightweight, instant structural DOM scanner with recursive Shadow DOM piercing. Zero network downloads and runs on 4GB laptops.</p>
+                <div class="meta-row">
+                  <span>Latency: 12-25ms</span> • <span>RAM: &lt; 8MB</span>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <div class="settings-subgroup">
+            <h3>Visual Privacy & Downscaling Invariants</h3>
+            <div class="checkbox-row">
+              <label>
+                <input type="checkbox" id="opt_azfr_enabled" checked>
+                Enable Atomic Zero-Knowledge Frame Rendering (Compositor-Level Text Masking)
+              </label>
+            </div>
+            <div class="checkbox-row">
+              <label>
+                <input type="checkbox" id="opt_premask_enabled" checked>
+                Apply +8px Safety Margin Blackout Boxes in Extension Origin
+              </label>
+            </div>
+            <div class="checkbox-row">
+              <label>
+                <input type="checkbox" id="opt_surveillance_enabled" checked>
+                Enable 5-Second Post-Execution DOM Mutation Surveillance
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: CLOUD & AIR-GAPPED REASONING -->
+      <section id="tab-reasoning" class="tab-pane" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>Stage 3 Reasoning Backend</h2>
+            <p>Configure cloud LLM reasoning or point to an air-gapped local endpoint for 100% sovereign operation.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="opt_reasoning_backend">Backend Provider</label>
+              <select id="opt_reasoning_backend">
+                <option value="anthropic">Anthropic Claude API (Direct Cloud Reasoner)</option>
+                <option value="ollama">Ollama (Air-Gapped Local Inference: http://localhost:11434)</option>
+                <option value="openai_compatible">OpenAI-Compatible Local Proxy (vLLM / LocalAI / LM Studio)</option>
+                <option value="simulation">Deterministic Simulated Reasoner (Offline Heuristic)</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width" id="grp_anthropic_key">
+              <label for="opt_anthropic_api_key">Anthropic API Key</label>
+              <input type="password" id="opt_anthropic_api_key" placeholder="sk-ant-api03-...">
+              <small class="help-text">Encrypted with AES-GCM 256-bit using your master passphrase.</small>
+            </div>
+
+            <div class="form-group full-width" id="grp_custom_endpoint" style="display: none;">
+              <label for="opt_custom_endpoint">Local API Endpoint URL</label>
+              <input type="url" id="opt_custom_endpoint" placeholder="http://localhost:11434/api/chat">
+              <small class="help-text">Local server endpoint for air-gapped enterprise environments.</small>
+            </div>
+
+            <div class="form-group" id="grp_model_name">
+              <label for="opt_model_name">Model Identifier</label>
+              <input type="text" id="opt_model_name" value="claude-3-7-sonnet-20250219" placeholder="e.g. claude-3-7-sonnet-20250219 or llama3.2">
+            </div>
+
+            <div class="form-group">
+              <label for="opt_timeout_sec">Inference Timeout (Seconds)</label>
+              <input type="number" id="opt_timeout_sec" value="15" min="5" max="60">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: NER & SANITIZER -->
+      <section id="tab-sanitizer" class="tab-pane" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>Stage 2 Local PII Redaction Settings</h2>
+            <p>Configure Named Entity Recognition rules and entity masking policies.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="opt_ner_engine">NER Execution Provider</label>
+              <select id="opt_ner_engine">
+                <option value="gliner">GLiNER ONNX NER + Deterministic Regex (Dual-Layer Defense)</option>
+                <option value="regex">Pure Deterministic Regex (Instant 0ms Latency)</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="opt_custom_denylist">Custom Keyword Denylist (Comma-separated)</label>
+              <textarea id="opt_custom_denylist" rows="3" placeholder="Enter sensitive project names, internal identifiers, or keywords to redact..."></textarea>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="opt_blind_structural">Blind Structural Anonymization</label>
+              <div class="checkbox-row">
+                <label>
+                  <input type="checkbox" id="opt_blind_enabled" checked>
+                  Blind structural metadata keywords (e.g. replace "Aadhaar" with "[GOV_ID_INPUT]")
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: COMPLIANCE & AUDIT -->
+      <section id="tab-compliance" class="tab-pane" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>Regulatory Compliance & DPDP/GDPR Audit Center</h2>
+            <p>Inspect local execution logs and export certified Article 6 compliance records.</p>
+          </div>
+
+          <div class="compliance-metrics">
+            <div class="metric-box">
+              <div class="metric-num" id="stat_total_runs">0</div>
+              <div class="metric-label">Completed Pipelines</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-num" id="stat_raw_pii">0 B</div>
+              <div class="metric-label">Raw PII Egressed</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-num" id="stat_ring_buffer">0 / 1000</div>
+              <div class="metric-label">Audit Log Capacity</div>
+            </div>
+          </div>
+
+          <div class="audit-actions">
+            <button id="btn_export_audit_json" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Full Audit Trail (JSON)
+            </button>
+            <button id="btn_export_compliance_report" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Generate DPDP/GDPR Compliance Certification
+            </button>
+            <button id="btn_clear_audit_logs" class="btn btn-danger">Clear Audit Logs</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: NEURAL CACHE & STORAGE -->
+      <section id="tab-storage" class="tab-pane" role="tabpanel">
+        <div class="card">
+          <div class="card-header">
+            <h2>On-Device Neural Model Storage & WebGPU Diagnostics</h2>
+            <p>Manage model weights cached in persistent browser Cache Storage.</p>
+          </div>
+
+          <div class="storage-card">
+            <div class="storage-row">
+              <span>WebGPU Hardware Adapter:</span>
+              <strong id="diag_webgpu_status">Probing...</strong>
+            </div>
+            <div class="storage-row">
+              <span>Model Weight Cache (`privbrowse-models-v1`):</span>
+              <strong id="diag_cache_status">Checking...</strong>
+            </div>
+            <div class="storage-row">
+              <span>Available Storage Quota:</span>
+              <strong id="diag_quota_status">Checking...</strong>
+            </div>
+          </div>
+
+          <div class="audit-actions" style="margin-top: 16px;">
+            <button id="btn_run_storage_preflight" class="btn btn-secondary">Run Storage Pre-Flight Test</button>
+            <button id="btn_purge_model_cache" class="btn btn-danger">Purge Cached Neural Weights</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

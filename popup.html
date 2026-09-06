@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrivBrowse — Privacy-Preserving Browser Agent</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-shield">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>PrivBrowse</h1>
+          <span class="badge-sih">SIH26171 &bull; Breaking Bad</span>
+        </div>
+      </div>
+      <div class="status-indicator" id="engine_status" title="Local Perception Engine Ready">
+        <span class="status-dot pulse"></span>
+        <span class="status-text">Active</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="tab-run" id="nav_run">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run
+      </button>
+      <button class="tab-btn" data-tab="tab-profile" id="nav_profile">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </button>
+      <button class="tab-btn" data-tab="tab-audit" id="nav_audit">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        Audit Log
+        <span class="audit-counter" id="log_badge">0</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-settings" id="nav_settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Config
+      </button>
+    </nav>
+
+    <!-- TAB 1: RUN ASSISTANT -->
+    <section class="tab-content active" id="tab-run">
+      <div class="card goal-card">
+        <div class="card-header">
+          <label for="agent_goal" class="section-title">Automation Goal</label>
+          <span class="pill-zero-pii">Zero-PII Invariant</span>
+        </div>
+        <textarea id="agent_goal" rows="3" placeholder="e.g. Fill out this scholarship application form with my profile details..."></textarea>
+        
+        <div class="preset-pills">
+          <span class="preset-label">Presets:</span>
+          <button type="button" class="preset-btn" data-preset="Fill out this scholarship application form with my personal profile.">Scholarship Form</button>
+          <button type="button" class="preset-btn" data-preset="Complete applicant verification details and declaration.">Verification Form</button>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <button id="btn_run_agent" class="btn-primary">
+          <span class="btn-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </span>
+          <span class="btn-text">Run PrivBrowse Agent</span>
+        </button>
+      </div>
+
+      <!-- Quick Stage Status Bar -->
+      <div class="pipeline-progress-box" id="pipeline_box">
+        <div class="progress-title">
+          <span id="pipeline_status_label">Pipeline Ready</span>
+          <span id="pipeline_percentage">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar" id="pipeline_bar"></div>
+        </div>
+        <div class="stage-pills">
+          <span class="spill" id="spill_1">1. Perceive</span>
+          <span class="spill" id="spill_2">2. PII Filter</span>
+          <span class="spill" id="spill_3">3. Cloud</span>
+          <span class="spill" id="spill_4">4. CaMeL Gate</span>
+          <span class="spill" id="spill_5">5. Execute</span>
+        </div>
+      </div>
+
+      <!-- Recent Log Snippet -->
+      <div class="recent-log-preview">
+        <div class="preview-header">
+          <span>Live Telemetry</span>
+          <a href="#" id="link_view_full_audit">View Full Audit &rarr;</a>
+        </div>
+        <div class="preview-log-text" id="preview_log">Awaiting command...</div>
+      </div>
+    </section>
+
+    <!-- TAB 2: LOCAL USER PROFILE -->
+    <section class="tab-content" id="tab-profile">
+      <div class="privacy-banner">
+        <div class="shield-mini">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="banner-text">
+          <strong>Local-Only Profile Storage:</strong>
+          These credentials are saved solely inside <code>chrome.storage.local</code> on this device. They are NEVER sent to the cloud!
+        </div>
+      </div>
+
+      <form id="profile_form" class="profile-form">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="prof_name">Full Name</label>
+            <input type="text" id="prof_name" placeholder="Aarav Sharma" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="prof_category">Category</label>
+            <select id="prof_category">
+              <option value="General">General</option>
+              <option value="OBC">OBC</option>
+              <option value="SC/ST">SC / ST</option>
+              <option value="EWS">EWS</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="prof_email">Email Address</label>
+            <input type="email" id="prof_email" placeholder="aarav.sharma@example.edu.in" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="prof_phone">Mobile Number</label>
+            <input type="tel" id="prof_phone" placeholder="9876543210" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prof_address">Residential Address</label>
+          <input type="text" id="prof_address" placeholder="42 Civil Lines, North Campus, New Delhi 110007">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="prof_dob">Date of Birth</label>
+            <input type="text" id="prof_dob" placeholder="2003-08-15">
+          </div>
+          <div class="form-group flex-1">
+            <label for="prof_pincode">PIN Code</label>
+            <input type="text" id="prof_pincode" placeholder="110007">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="prof_aadhaar">Aadhaar (Test)</label>
+            <input type="text" id="prof_aadhaar" placeholder="2345 6789 0123">
+          </div>
+          <div class="form-group flex-1">
+            <label for="prof_pan">PAN (Test)</label>
+            <input type="text" id="prof_pan" placeholder="ABCDE1234F">
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button type="button" id="btn_sample_profile" class="btn-secondary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Load Sample Data
+          </button>
+          <button type="submit" id="btn_save_profile" class="btn-primary-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Profile
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 3: AUDIT LOG -->
+    <section class="tab-content" id="tab-audit">
+      <div class="audit-summary-grid">
+        <div class="sum-card">
+          <div class="sum-val" id="sum_elements">0</div>
+          <div class="sum-lbl">Indexed UI Elements</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-val text-green" id="sum_pii_filtered">0</div>
+          <div class="sum-lbl">PII Masked (Local)</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-val text-cyan" id="sum_verified_safe">0/0</div>
+          <div class="sum-lbl">Safe Actions Verified</div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-val text-red" id="sum_blocked_unsafe">0</div>
+          <div class="sum-lbl">Injections Blocked</div>
+        </div>
+      </div>
+
+      <div class="audit-controls">
+        <div class="filter-pills">
+          <button class="filter-pill active" data-filter="ALL">All</button>
+          <button class="filter-pill" data-filter="SECURITY_ALERT">Alerts</button>
+          <button class="filter-pill" data-filter="STAGE_3">Cloud Egress</button>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <button id="btn_export_logs" class="btn-ghost-sm" title="Download compliant JSON audit trail">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button>
+          <button id="btn_clear_logs" class="btn-ghost-sm">Clear</button>
+        </div>
+      </div>
+
+      <div class="audit-stream-box" id="audit_stream">
+        <div class="log-empty">No active execution logs yet. Run the assistant to see the 5-stage verification live!</div>
+      </div>
+      <div class="audit-policy-note" style="margin-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4; text-align: center;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="vertical-align: -1px; margin-right: 2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Local Compliance Policy: Up to 1000 events stored exclusively on device with FIFO auto-rotation. Zero external analytics or telemetry.
+      </div>
+    </section>
+
+    <!-- TAB 4: SETTINGS -->
+    <section class="tab-content" id="tab-settings">
+      <div class="card settings-card">
+        <h3 class="section-title">Cloud Reasoning & Cryptography Setup</h3>
+        <p class="settings-desc">
+          PrivBrowse connects to Anthropic Claude Sonnet to plan actions over the <strong>sanitized structural skeleton only</strong>.
+        </p>
+
+        <!-- Master Passphrase for Zero-Knowledge PBKDF2 Key Derivation -->
+        <div class="form-group">
+          <label for="cfg_master_passphrase">Master Passphrase (Zero-Knowledge AES-256)</label>
+          <div class="input-toggle-group">
+            <input type="password" id="cfg_master_passphrase" placeholder="Enter master passphrase to derive AES key...">
+            <button type="button" id="btn_toggle_passphrase_vis" class="btn-icon-only" title="Show/Hide">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <small class="help-text">Derives 256-bit AES-GCM key with PBKDF2 (100,000 rounds). Kept strictly in volatile session memory; never saved to disk.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="cfg_api_key">Anthropic API Key</label>
+          <div class="input-toggle-group">
+            <input type="password" id="cfg_api_key" placeholder="sk-ant-api03-...">
+            <button type="button" id="btn_toggle_key_vis" class="btn-icon-only" title="Show/Hide">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div id="key_health_badge" style="margin-top: 5px; font-size: 11px; font-weight: 600; color: #10b981; display: flex; align-items: center; gap: 4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M21 2l-2 2m-1.5 1.5L14 9l-3-3 2.5-2.5a2.121 2.121 0 0 1 3 0l4.5 4.5z"/><circle cx="7.5" cy="16.5" r="4.5"/></svg>
+            <span>Status: Ready & Valid (4-Hour Session TTL & 30-Day Cryptographic Lifetime)</span>
+          </div>
+          <small class="help-text">Validated format (sk-ant-...). Encrypted with AES-GCM in volatile session memory.</small>
+        </div>
+
+        <!-- Model Download Progress Box (Condition 4) -->
+        <div id="model_download_box" class="pipeline-progress-box hidden" style="margin-bottom: 14px; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3);">
+          <div class="progress-title" style="margin-bottom: 6px;">
+            <span id="model_download_label" style="font-size: 11px; font-weight: 600; color: #34d399; display: flex; align-items: center; gap: 4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+              Downloading SmolVLM-256M Weights...
+            </span>
+            <span id="model_download_pct" style="font-size: 11px; font-weight: 700; color: #34d399;">0%</span>
+          </div>
+          <div class="progress-track" style="height: 6px;">
+            <div class="progress-bar" id="model_download_bar" style="width: 0%; background: #10b981;"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cfg_perception_engine">Local Perception Engine</label>
+          <select id="cfg_perception_engine">
+            <option value="vision" selected>On-Device Neural Vision (SmolVLM-256M WebGPU + GLiNER ONNX NER) [PRIMARY]</option>
+            <option value="dom">Deterministic DOM Perception (0MB Download, Instant 15ms, Low-Spec 4GB Laptops)</option>
+          </select>
+          <small class="help-text">Default: SmolVLM-256M Neural Vision Grounding with automatic fallback on non-WebGPU devices.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="cfg_model">Anthropic Cloud Model</label>
+          <select id="cfg_model">
+            <option value="claude-sonnet-4-6">claude-sonnet-4-6 (Recommended)</option>
+            <option value="claude-3-7-sonnet-20250219">claude-3-7-sonnet-20250219</option>
+            <option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet-20241022</option>
+          </select>
+        </div>
+
+        <!-- Post-Execution Surveillance Toggle (Condition 2) -->
+        <div class="form-group toggle-row">
+          <div>
+            <label for="cfg_surveillance" class="toggle-label">Post-Execution Security Surveillance</label>
+            <div class="toggle-desc">Monitors DOM for 5 seconds post-execution to intercept external script injections and unprompted form submits.</div>
+          </div>
+          <input type="checkbox" id="cfg_surveillance" checked>
+        </div>
+
+        <div class="form-group toggle-row">
+          <div>
+            <label for="cfg_simulation_mode" class="toggle-label">Offline Simulation Mode</label>
+            <div class="toggle-desc">Enable for offline judging demos without an active Anthropic API balance.</div>
+          </div>
+          <input type="checkbox" id="cfg_simulation_mode">
+        </div>
+
+        <button type="button" id="btn_save_settings" class="btn-primary">
+          Save Configuration
+        </button>
+        <button type="button" id="btn_open_options" class="btn-ghost" style="margin-top: 8px; width: 100%; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; border-color: rgba(16, 185, 129, 0.4); color: #34d399;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Enterprise Administration Dashboard
+        </button>
+        <button type="button" id="btn_revoke_key" class="btn-ghost" style="margin-top: 8px; color: #ef4444; border-color: rgba(239, 68, 68, 0.4); width: 100%; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Revoke & Purge Stored Key
+        </button>
+      </div>
+
+      <div class="architecture-specs">
+        <h4>Stage Architecture Specs (SIH 2026):</h4>
+        <ul>
+          <li><strong>Stage 1 (Perception):</strong> On-device WebGPU SmolVLM + Shadow DOM piercing</li>
+          <li><strong>Stage 2 (Redaction):</strong> On-device GLiNER ONNX NER + Blind structural skeleton</li>
+          <li><strong>Stage 3 (Reasoning):</strong> Structural skeleton only, zero PII egress</li>
+          <li><strong>Stage 4 (Verification):</strong> CaMeL-style deterministic intent & refId gate</li>
+          <li><strong>Stage 5 (Execution):</strong> Visual action dispatch + Post-execution surveillance</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Total Zero-PII Egress Metric Counter (Item 4.D) -->
+    <footer class="app-footer-stats">
+      <div class="egress-metric" id="egress_metric" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span>Total PII Exfiltrated: <strong style="color: #10b981;">0 Bytes</strong> &bull; Cloud Payload: <span id="cloud_payload_counter">0 Bytes</span></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+        <button type="button" id="btn_open_privacy" style="background: none; border: none; color: #94a3b8; font-size: 10px; cursor: pointer; text-decoration: underline;">
+          Zero-PII Privacy Policy & Guarantees
+        </button>
+        <span style="font-size: 10px; color: #475569;">v1.2.0 Enterprise</span>
+      </div>
+    </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy_modal" class="modal hidden" style="position: fixed; inset: 0; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px;">
+      <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; max-width: 380px; padding: 20px; color: #e2e8f0; font-size: 12px; line-height: 1.5; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+          <h3 style="font-size: 14px; font-weight: 700; color: #10b981; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            PrivBrowse Privacy Manifesto
+          </h3>
+          <button type="button" id="btn_close_privacy" style="background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer;">&times;</button>
+        </div>
+        <p style="margin: 0 0 8px 0;"><strong>Zero-PII Invariant:</strong> Raw user personal data (Aadhaar, PAN, phone, address, passwords) is NEVER transmitted off your device under any circumstances.</p>
+        <p style="margin: 0 0 8px 0;"><strong>Split-Compute Architecture:</strong> Only a blinded structural skeleton (e.g. <code>[GOV_ID_INPUT]</code>) is sent to Anthropic Claude for high-level reasoning. Field resolution occurs strictly locally via Stage 5 execution.</p>
+        <p style="margin: 0 0 8px 0;"><strong>Zero-Knowledge Cryptography:</strong> API keys are encrypted via AES-256-GCM derived from your master passphrase using PBKDF2 (100,000 rounds) and held only in volatile session memory.</p>
+        <p style="margin: 0; color: #94a3b8; font-size: 11px;">Complies with Digital Personal Data Protection (DPDP) Act 2023 & GDPR Art 25 (Privacy by Design).</p>
+      </div>
+    </div>
+
+    <!-- Footer Toast -->
+    <div id="toast" class="toast hidden">Profile saved!</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
