@@ -247,13 +247,18 @@ async function sleep(ms) {
     console.log('\n[Test 3] Live Service Worker Audit Log & Zero Raw PII Egress:');
     if (swClient) {
       await itAsync('Verifies 5-Stage Zero-PII pipeline logged in background service worker', async () => {
-        const auditLogs = await swClient.eval(`
-          new Promise((resolve) => {
-            chrome.storage.local.get(['pb_audit_logs'], (res) => {
-              resolve(res.pb_audit_logs || currentSession?.logs || []);
-            });
-          })
-        `);
+        let auditLogs = [];
+        for (let attempt = 0; attempt < 15; attempt++) {
+          auditLogs = await swClient.eval(`
+            new Promise((resolve) => {
+              chrome.storage.local.get(['pb_audit_logs'], (res) => {
+                resolve(res.pb_audit_logs || currentSession?.logs || []);
+              });
+            })
+          `);
+          if (Array.isArray(auditLogs) && auditLogs.length >= 5) break;
+          await sleep(400);
+        }
 
         assert(Array.isArray(auditLogs) && auditLogs.length >= 5, 'Audit log must record pipeline lifecycle');
         const stagesRecorded = new Set(auditLogs.map(l => l.stage));
