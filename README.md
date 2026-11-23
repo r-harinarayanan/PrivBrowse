@@ -1,8 +1,9 @@
 # PrivBrowse Enterprise — On-Device Visual Perception Browser Agent (v1.2.0)
 
-[![SIH 2026](https://img.shields.io/badge/SIH_2026-PS_ID:_SIH26171-blue.svg)](https://sih.gov.in)
+Y9SGPZ
+
 [![Theme](https://img.shields.io/badge/Theme-Smart_Automation-green.svg)]()
-[![Team](https://img.shields.io/badge/Team-Breaking_Bad-orange.svg)]()
+
 [![Release](https://img.shields.io/badge/Release-v1.2.0_Enterprise-emerald.svg)]()
 [![Manifest V3](https://img.shields.io/badge/Chrome_Extension-Manifest_V3-yellow.svg)]()
 [![Zero PII Egress](https://img.shields.io/badge/Privacy-Zero_PII_Egress-brightgreen.svg)]()
@@ -268,8 +269,6 @@ Physical recordings verifying automated agent execution and defense against adve
 
 ---
 
-## 👥 Team Breaking Bad (SIH 2026)
-- **Problem Statement:** SIH26171 — On-Device Visual Perception for Light-Weight Browser Agents
-- **Category:** Software
-- **Theme:** Smart Automation
-- **Product:** PrivBrowse Enterprise (Release v1.2.0)
+## 
+- On-Device Visual Perception for Light-Weight Browser Agents
+
